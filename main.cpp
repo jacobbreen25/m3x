@@ -1,12 +1,15 @@
 #include <iostream>
+#include <chrono>
 #include <vector>
+#include <thread>
+#include <string>
 #include <simpleble/Adapter.h>
 #include <simpleble/Peripheral.h>
 #include <simpleble/Service.h>
 #include <simpleble/Characteristic.h>
 #include <simpleble/Descriptor.h>
 
-
+using namespace std::chrono_literals;
 
 int main(int argc, char* argv[]){
    if (!SimpleBLE::Adapter::bluetooth_enabled()) {
@@ -46,14 +49,31 @@ int main(int argc, char* argv[]){
    for (auto service : device.services()) {
       for (auto characteristic : service.characteristics()) {
          if(service.uuid() == "e54aa130-bdbf-11ed-a901-0800200c9a66" && characteristic.uuid() == "e54aa131-bdbf-11ed-a901-0800200c9a66") {
-            std::cout << service.uuid() << ":" << characteristic.uuid() << std::endl;
+            std::cout << service.uuid() << " : " << characteristic.uuid() << std::endl;
             uuids.first = service.uuid();
             uuids.second = characteristic.uuid();
          }
       }
    }
-   std::string data = "ON";
+   //std::string data = "TEST";
+   
+   SimpleBLE::ByteArray responseArray;
+   for(size_t i = 0; i < 5; i++) {
+      responseArray = device.read(uuids.first, uuids.second);
+      std::this_thread::sleep_for(50ms);
+   }
+   std::string responseData = responseArray.c_str();
+   std::cout << responseData << std::endl;
+
+   SimpleBLE::ByteArray data("ON");
    device.write_request(uuids.first, uuids.second, data);
 
+   std::this_thread::sleep_for(50ms);
+   for(size_t i = 0; i < 5; i++) {
+      responseArray = device.read(uuids.first, uuids.second);
+      std::this_thread::sleep_for(50ms);
+   }
+   responseData = responseArray.c_str();
+   std::cout << responseData << std::endl;
    device.disconnect();
 }
