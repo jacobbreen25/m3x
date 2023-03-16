@@ -65,6 +65,7 @@ int main(int argc, char* argv[]){
    std::string responseData = responseArray.c_str();
    std::cout << responseData << std::endl;
 
+   
    SimpleBLE::ByteArray data("ON");
    device.write_request(uuids.first, uuids.second, data);
 
