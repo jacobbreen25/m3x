@@ -19,8 +19,12 @@ include(GNUInstallDirs)
 option(SIMPLEBLE_PLAIN "Use plain version of SimpleBLE" OFF)
 
 option(LIBFMT_VENDORIZE "Enable vendorized libfmt" ON)
-find_package(fmt REQUIRED)
 
+find_library(FMT_LIB fmt)
+if(NOT FMT_LIB)
+    find_package(fmt REQUIRED)
+    message(STATUS "fmt not found; Making it now")
+endif()
 if(SIMPLEBLE_TEST)
     message(STATUS "Building tests requires plain version of SimpleBLE")
     set(SIMPLEBLE_PLAIN ON)
