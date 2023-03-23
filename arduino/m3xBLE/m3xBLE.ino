@@ -68,7 +68,7 @@ void setup() {
   int position = 0;      // position in degrees, initialize to zero
 
   
-  Serial.begin(57600);
+  Serial.begin(9600);
   if(!BLE.begin()){
     Serial.println("BLE Failed");
   }
@@ -137,8 +137,8 @@ void loop() {
       String message = commandData.value();
       commandData.writeValue(" ");
 
-      if(message == "ON") {
-        Serial.println("ON");
+      if(message == "GO") {
+        Serial.println("GO");
         hapticStimulus(90);
         status = true;
         //commandData.writeValue("STARTING");
@@ -166,6 +166,11 @@ void loop() {
     }
 
   } else if(!central.connected()) {
+    String message = Serial.readString();
+    if (message == "GO") {
+      hapticStimulus(90);
+      Serial.println("Going... Going.. Gone");
+    }
     //Serial.print("Disconnected from Device ");
     //Serial.println(central.address());
   }
