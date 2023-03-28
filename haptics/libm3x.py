@@ -7,12 +7,12 @@ class haptic1tactor_handler():
     def __init__(self, name = "m3xBLE", port = "COM3", baudrate = 9600):
         self.port = port
         self.baud = baudrate
-        self.serialBool = True
         self.name = name
         self.device = None
         try:
             self.serial = serial.Serial(self.port, self.baud)
         except serial.SerialException as err:
+            self.serial = None
             asyncio.run(self.__getDevice(self.name))
             if not self.device:
                 self.__del__()
@@ -22,7 +22,8 @@ class haptic1tactor_handler():
     ################# New functions for haptics exp ##################################
 
     def close_serial(self):
-        self.serial.close()
+        if self.serial != None:
+            self.serial.close()
 
     def read_data(self,isstream):
         if self.serialBool:
@@ -34,7 +35,7 @@ class haptic1tactor_handler():
         #return data
 
     def write_data(self, message = "GO"):
-        if self.serialBool:
+        if self.serial != None:
             self.serial.write(message.encode('ascii'))
             time.sleep(1)
         else:
@@ -49,8 +50,6 @@ class haptic1tactor_handler():
             asyncio.run(self.__writeDevice(self.device, message))
         except serial.SerialException as err:
             raise err
-
-
 
     async def __getDevice(self, name : str):
         devices = await BleakScanner.discover()

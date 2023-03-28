@@ -5,13 +5,8 @@ testApp = None
 
 try:
     testApp = m3x.haptic1tactor_handler()
-except NameError as err:
-    print("ERROR: " + str(err))
-    exit()
-
-try:
     testApp.write_ble()
+    testApp.write_data()
 except Exception as err:
     print("ERROR: " + str(err))
-
-testApp.write_data()
+    exit()
